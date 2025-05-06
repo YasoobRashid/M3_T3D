@@ -31,34 +31,12 @@ int parseLightID(const std::string& id_str) {
     }
 }
 
-std::string threadLevelToString(int level) {
-    switch (level) {
-        case MPI_THREAD_SINGLE: return "MPI_THREAD_SINGLE";
-        case MPI_THREAD_FUNNELED: return "MPI_THREAD_FUNNELED";
-        case MPI_THREAD_SERIALIZED: return "MPI_THREAD_SERIALIZED";
-        case MPI_THREAD_MULTIPLE: return "MPI_THREAD_MULTIPLE";
-        default: return "UNKNOWN";
-    }
-}
-
 int main(int argc, char** argv) {
-    int provided;
-    MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
+    MPI_Init(&argc, &argv);
 
     int world_rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-    if (world_rank == 0) {
-        std::cout << "Requested thread level: MPI_THREAD_MULTIPLE\n";
-        std::cout << "Provided thread level: " << threadLevelToString(provided) << "\n";
-
-        if (provided < MPI_THREAD_MULTIPLE) {
-            std::cout << "Note: MPI implementation does not fully support multithreaded MPI calls.\n";
-        } else {
-            std::cout << "Thread safety status: Full multithreaded MPI support is available.\n";
-        }
-    }
 
     std::vector<TrafficData> all_data;
 
